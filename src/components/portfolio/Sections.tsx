@@ -17,8 +17,11 @@ import {
 	type ReactNode,
 } from "react";
 import { fullName, profile } from "@/content/profile";
-import { INTRO } from "./Chrome";
 import { LineMandala } from "./Decor";
+import { SectionHeading } from "./SectionHeading";
+import { about, contact, disciplines, home, journey, work } from "./outline";
+import { heroEntrance } from "./reveal";
+import { randomSequence, sequenceSeed } from "./sequence";
 import { Rangoli } from "./ui";
 
 const DNA3D = lazy(() => import("./DNA3D"));
@@ -36,40 +39,6 @@ function ClientDNA() {
 }
 
 /* ---------- small building blocks ---------- */
-
-function Kicker({ n, children }: { n: string; children: ReactNode }) {
-	return (
-		<div className="flex items-center gap-4 text-xs uppercase tracking-[0.3em] text-muted-foreground">
-			<span className="text-accent">({n})</span>
-			<span className="h-px w-10 bg-border" />
-			{children}
-		</div>
-	);
-}
-
-function LineReveal({
-	children,
-	delay = 0,
-	className = "",
-}: {
-	children: ReactNode;
-	delay?: number;
-	className?: string;
-}) {
-	return (
-		<span className={`block overflow-hidden ${className}`}>
-			<motion.span
-				className="block"
-				initial={{ y: "110%" }}
-				whileInView={{ y: 0 }}
-				viewport={{ once: true, margin: "-10%" }}
-				transition={{ duration: 1.1, delay, ease }}
-			>
-				{children}
-			</motion.span>
-		</span>
-	);
-}
 
 function Magnetic({
 	children,
@@ -174,18 +143,11 @@ function Marquee({
 
 /* ---------- Hero ---------- */
 
-const BASES = "ATGC";
-
 function SequencePulse() {
-	const [seq, setSeq] = useState("ATGCGTACCTGA");
+	const [seq, setSeq] = useState(sequenceSeed);
 	useEffect(() => {
 		const id = window.setInterval(() => {
-			setSeq(
-				Array.from(
-					{ length: 12 },
-					() => BASES[Math.floor(Math.random() * 4)],
-				).join(""),
-			);
+			setSeq(randomSequence());
 		}, 220);
 		return () => window.clearInterval(id);
 	}, []);
@@ -247,11 +209,11 @@ export function Hero() {
 		offset: ["start start", "end start"],
 	});
 	const fade = useTransform(scrollYProgress, [0, 0.8], [1, 0]);
-	const d = INTRO + 0.2;
+	const d = heroEntrance;
 
 	return (
 		<section
-			id="home"
+			id={home.id}
 			ref={ref}
 			className="relative flex h-[100svh] min-h-[100svh] flex-col overflow-hidden pt-20 lg:h-auto lg:min-h-[100svh] lg:pt-24"
 		>
@@ -350,7 +312,7 @@ export function Hero() {
 						className="mt-4 flex flex-wrap items-center gap-2.5 lg:mt-9 lg:gap-3"
 					>
 						<a
-							href="#about"
+							href={about.href}
 							className="inline-flex items-center gap-2 rounded-full bg-primary px-5 py-2.5 text-sm text-primary-foreground transition-colors hover:bg-accent lg:px-6 lg:py-3"
 						>
 							Enter the lab
@@ -366,7 +328,7 @@ export function Hero() {
 							</motion.span>
 						</a>
 						<a
-							href="#contact"
+							href={contact.href}
 							className="inline-flex items-center rounded-full border border-foreground/20 bg-background px-5 py-2.5 text-sm transition-colors hover:border-accent hover:text-accent lg:px-6 lg:py-3"
 						>
 							Let's talk
@@ -491,10 +453,13 @@ export function About() {
 	const words = text.split(" ");
 
 	return (
-		<section id="about" className="relative px-5 py-28 sm:px-10 md:py-40">
+		<section
+			id={about.id}
+			className="relative px-5 py-28 sm:px-10 md:py-40"
+		>
 			<LineMandala className="-top-10 -right-48 size-[34rem] opacity-25" />
 			<div className="relative mx-auto max-w-6xl">
-				<Kicker n="01">About</Kicker>
+				<SectionHeading n={about.n} label={about.kicker} />
 				<p
 					ref={ref}
 					className="mt-10 font-display text-2xl font-light leading-[1.3] tracking-tight sm:text-4xl md:text-[2.75rem]"
@@ -553,23 +518,20 @@ export function Skills() {
 	const [active, setActive] = useState<number | null>(0);
 	return (
 		<section
-			id="skills"
+			id={disciplines.id}
 			className="relative bg-muted/60 px-5 py-28 text-foreground sm:px-10 md:py-40"
 		>
 			<div className="mx-auto max-w-6xl">
 				<div className="flex flex-col justify-between gap-8 md:flex-row md:items-end">
 					<div>
-						<div className="flex items-center gap-4 text-xs uppercase tracking-[0.3em] opacity-60">
-							<span className="text-accent">(02)</span>
-							<span className="h-px w-10 bg-border" />
-							Disciplines
-						</div>
-						<h2 className="mt-8 font-display text-5xl font-light leading-[0.95] tracking-tight sm:text-6xl">
-							<LineReveal>Where biology</LineReveal>
-							<LineReveal delay={0.1}>
-								<em className="text-accent">meets code.</em>
-							</LineReveal>
-						</h2>
+						<SectionHeading
+							n={disciplines.n}
+							label={disciplines.kicker}
+							lines={[
+								"Where biology",
+								<em className="text-accent">meets code.</em>,
+							]}
+						/>
 					</div>
 					<p className="max-w-xs text-sm leading-relaxed opacity-70">
 						{profile.skills.intro}
@@ -654,18 +616,19 @@ export function Experience() {
 
 	return (
 		<section
-			id="experience"
+			id={journey.id}
 			className="relative px-5 py-28 sm:px-10 md:py-40"
 		>
 			<div className="mx-auto grid max-w-6xl gap-16 md:grid-cols-[1fr_1.6fr]">
 				<div className="md:sticky md:top-32 md:self-start">
-					<Kicker n="03">Journey</Kicker>
-					<h2 className="mt-8 font-display text-5xl font-light leading-[0.95] tracking-tight sm:text-6xl">
-						<LineReveal>Steps on</LineReveal>
-						<LineReveal delay={0.1}>
-							<em className="text-accent">the path.</em>
-						</LineReveal>
-					</h2>
+					<SectionHeading
+						n={journey.n}
+						label={journey.kicker}
+						lines={[
+							"Steps on",
+							<em className="text-accent">the path.</em>,
+						]}
+					/>
 					<BlockPrint className="mt-10 max-w-[12rem] opacity-70" />
 				</div>
 				<div ref={ref} className="relative">
@@ -843,10 +806,15 @@ export function Projects() {
 
 	const intro = (
 		<div className="flex shrink-0 flex-col justify-center md:w-[34vw]">
-			<Kicker n="04">Selected work</Kicker>
-			<h2 className="mt-8 font-display text-5xl font-light leading-[0.95] tracking-tight sm:text-6xl">
-				Things I've <em className="text-accent">explored.</em>
-			</h2>
+			<SectionHeading
+				n={work.n}
+				label={work.kicker}
+				lines={[
+					<>
+						Things I've <em className="text-accent">explored.</em>
+					</>,
+				]}
+			/>
 			<p className="mt-6 max-w-xs text-sm text-muted-foreground">
 				{profile.projects.note}
 			</p>
@@ -854,10 +822,9 @@ export function Projects() {
 	);
 
 	return (
-		<>
+		<div id={work.id}>
 			{/* desktop: pinned horizontal */}
 			<section
-				id="projects"
 				ref={ref}
 				className="relative hidden h-[360vh] bg-muted/50 md:block"
 			>
@@ -886,10 +853,7 @@ export function Projects() {
 				</div>
 			</section>
 			{/* mobile: stacked */}
-			<section
-				id="projects-m"
-				className="bg-muted/50 px-5 py-24 md:hidden"
-			>
+			<section className="bg-muted/50 px-5 py-24 md:hidden">
 				{intro}
 				<div className="mt-12 flex flex-col gap-6">
 					{profile.projects.items.map((p, i) => (
@@ -902,7 +866,7 @@ export function Projects() {
 					))}
 				</div>
 			</section>
-		</>
+		</div>
 	);
 }
 
@@ -912,18 +876,20 @@ export function Contact() {
 	const [copied, setCopied] = useState(false);
 	return (
 		<section
-			id="contact"
+			id={contact.id}
 			className="relative overflow-hidden px-5 pt-32 pb-16 sm:px-10 md:pt-44"
 		>
 			<LineMandala className="-bottom-60 left-1/2 size-[44rem] -translate-x-1/2 opacity-25" />
 			<div className="relative mx-auto max-w-6xl">
-				<Kicker n="05">Contact</Kicker>
-				<h2 className="mt-10 font-display text-[12vw] font-light leading-[0.9] tracking-[-0.03em] md:text-[6.5rem]">
-					<LineReveal>Let's grow</LineReveal>
-					<LineReveal delay={0.1}>
-						<em className="text-accent">something.</em>
-					</LineReveal>
-				</h2>
+				<SectionHeading
+					n={contact.n}
+					label={contact.kicker}
+					titleClassName="mt-10 font-display text-[12vw] font-light leading-[0.9] tracking-[-0.03em] md:text-[6.5rem]"
+					lines={[
+						"Let's grow",
+						<em className="text-accent">something.</em>,
+					]}
+				/>
 				<div className="mt-16 flex flex-col items-start gap-10 md:flex-row md:items-center md:justify-between">
 					<Magnetic>
 						<button
@@ -973,7 +939,7 @@ export function Footer() {
 					© {profile.year} {fullName}
 				</span>
 				<span>{profile.footer.note}</span>
-				<a href="#home">Back to top ↑</a>
+				<a href={home.href}>Back to top ↑</a>
 			</div>
 			<p className="mt-8 select-none text-center font-display text-[15vw] font-light leading-[0.8] tracking-[-0.04em] text-outline opacity-20">
 				{fullName}

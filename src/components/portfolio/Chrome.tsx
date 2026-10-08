@@ -7,8 +7,8 @@ import {
 } from "motion/react";
 import { useEffect, useState } from "react";
 import { fullName, profile } from "@/content/profile";
-
-export const INTRO = 2.2; // seconds the preloader stays before the page reveals
+import { countMs } from "./reveal";
+import { randomSequence, sequenceSeed } from "./sequence";
 
 /** Smooth inertial scrolling for the whole page. */
 export function SmoothScroll() {
@@ -30,17 +30,15 @@ export function SmoothScroll() {
 	return null;
 }
 
-const BASES = "ATGC";
-
 /** Opening screen: a "sequencing" counter that lifts away like a curtain. */
 export function Preloader() {
 	const [n, setN] = useState(0);
 	const [done, setDone] = useState(false);
-	const [seq, setSeq] = useState("ATGCGTACCTGA");
+	const [seq, setSeq] = useState(sequenceSeed);
 
 	useEffect(() => {
 		const start = performance.now();
-		const dur = (INTRO - 0.5) * 1000;
+		const dur = countMs;
 		let id = 0;
 		let hide = 0;
 		const finish = () => {
@@ -51,12 +49,7 @@ export function Preloader() {
 		const tick = (t: number) => {
 			const p = Math.min(1, (t - start) / dur);
 			setN(Math.round((1 - Math.pow(1 - p, 3)) * 100));
-			setSeq(
-				Array.from(
-					{ length: 12 },
-					() => BASES[Math.floor(Math.random() * 4)],
-				).join(""),
-			);
+			setSeq(randomSequence());
 			if (p < 1) id = requestAnimationFrame(tick);
 			else finish();
 		};
