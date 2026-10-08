@@ -1,6 +1,6 @@
 import { motion, useScroll, useTransform } from "motion/react";
-import colorMandala from "@/assets/mandala-line.png";
-import lineMandala from "@/assets/mandala-line.png";
+import colorMandala from "@/assets/mandala-line.svg";
+import lineMandala from "@/assets/mandala-line.svg";
 
 /** Colourful mandala, usually cropped by a section edge (like a peeking half-mandala). */
 export function ColorMandala({ className = "" }: { className?: string }) {
