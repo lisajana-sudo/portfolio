@@ -10,10 +10,10 @@ import {
 	Projects,
 	Skills,
 } from "@/components/portfolio/Sections";
+import { profile } from "@/content/profile";
 
-const title = "Lisa Jana — Biotech & AI Portfolio";
-const description =
-	"Lisa Jana, B.Tech Biotechnology student from India working where biology meets AI, data science and bioinformatics.";
+const title = profile.seo.title;
+const description = profile.seo.description;
 
 export const Route = createFileRoute("/")({
 	head: () => ({

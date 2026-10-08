@@ -6,6 +6,7 @@ import {
 	useSpring,
 } from "motion/react";
 import { useEffect, useState } from "react";
+import { fullName, profile } from "@/content/profile";
 
 export const INTRO = 2.2; // seconds the preloader stays before the page reveals
 
@@ -78,12 +79,12 @@ export function Preloader() {
 					className="fixed inset-0 z-[100] flex flex-col justify-between bg-background p-6 text-foreground sm:p-10"
 				>
 					<div className="flex justify-between text-xs uppercase tracking-[0.3em] opacity-70">
-						<span>Lisa Jana</span>
-						<span>Sequencing…</span>
+						<span>{fullName}</span>
+						<span>{profile.preloader.status}</span>
 					</div>
 					<div className="text-center">
 						<p className="font-display text-sm italic opacity-60">
-							reading the code of life
+							{profile.preloader.caption}
 						</p>
 						<p className="mt-3 font-display text-2xl tracking-[0.4em] text-gold sm:text-4xl">
 							{seq}
@@ -91,7 +92,7 @@ export function Preloader() {
 					</div>
 					<div className="flex items-end justify-between">
 						<span className="text-xs uppercase tracking-[0.3em] opacity-70">
-							Biotech × AI
+							{profile.field}
 						</span>
 						<span className="font-display text-6xl font-light leading-none tabular-nums sm:text-8xl">
 							{n}

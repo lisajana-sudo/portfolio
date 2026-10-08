@@ -5,6 +5,7 @@ import {
 	useScroll,
 } from "motion/react";
 import { useEffect, useState } from "react";
+import { profile } from "@/content/profile";
 import { INTRO } from "./Chrome";
 
 const links = [
@@ -24,7 +25,7 @@ function IndiaTime() {
 					hour: "2-digit",
 					minute: "2-digit",
 					hour12: false,
-					timeZone: "Asia/Kolkata",
+					timeZone: profile.timeZone,
 				}).format(new Date()),
 			);
 		f();
@@ -32,7 +33,11 @@ function IndiaTime() {
 		return () => clearInterval(id);
 	}, []);
 	return (
-		<span className="tabular-nums">{t ? `India ${t} IST` : "India"}</span>
+		<span className="tabular-nums">
+			{t
+				? `${profile.location} ${t} ${profile.timeZoneLabel}`
+				: profile.location}
+		</span>
 	);
 }
 
@@ -59,7 +64,8 @@ export function Nav() {
 			>
 				<div className="flex items-center justify-between gap-6 rounded-full border border-border/70 bg-background/70 py-2 pr-2 pl-5 backdrop-blur-xl">
 					<a href="#home" className="font-display text-xl italic">
-						Lisa<span className="text-accent">.</span>
+						{profile.name.first}
+						<span className="text-accent">.</span>
 					</a>
 					<nav className="hidden items-center gap-1 md:flex">
 						{links.map(([l, h], i) => (
@@ -143,7 +149,7 @@ export function Nav() {
 							</motion.a>
 						))}
 						<p className="mt-8 text-sm opacity-60">
-							hello@lisajana.in
+							{profile.email}
 						</p>
 					</motion.div>
 				)}
