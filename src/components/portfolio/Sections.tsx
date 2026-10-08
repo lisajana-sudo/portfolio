@@ -18,6 +18,7 @@ import {
 } from "react";
 import { INTRO } from "./Chrome";
 import { LineMandala } from "./Decor";
+import { Rangoli } from "./ui";
 
 const DNA3D = lazy(() => import("./DNA3D"));
 const ease = [0.22, 1, 0.36, 1] as const;
@@ -172,138 +173,256 @@ function Marquee({
 
 /* ---------- Hero ---------- */
 
+const BASES = "ATGC";
+
+function SequencePulse() {
+	const [seq, setSeq] = useState("ATGCGTACCTGA");
+	useEffect(() => {
+		const id = window.setInterval(() => {
+			setSeq(
+				Array.from(
+					{ length: 12 },
+					() => BASES[Math.floor(Math.random() * 4)],
+				).join(""),
+			);
+		}, 220);
+		return () => window.clearInterval(id);
+	}, []);
+	return (
+		<p className="font-display text-[11px] tracking-[0.42em] text-gold">
+			{seq}
+		</p>
+	);
+}
+
+function KolamRing({ className = "" }: { className?: string }) {
+	const dots = Array.from({ length: 16 }, (_, i) => {
+		const a = (i / 16) * Math.PI * 2 - Math.PI / 2;
+		return {
+			i,
+			x: 100 + Math.cos(a) * 93,
+			y: 100 + Math.sin(a) * 93,
+			gold: i % 4 === 0,
+		};
+	});
+	return (
+		<svg viewBox="0 0 200 200" className={className} aria-hidden>
+			<circle
+				cx="100"
+				cy="100"
+				r="78"
+				fill="none"
+				stroke="currentColor"
+				strokeDasharray="1.5 7"
+				strokeWidth="0.55"
+				className="text-accent/70"
+			/>
+			<circle
+				cx="100"
+				cy="100"
+				r="93"
+				fill="none"
+				stroke="currentColor"
+				strokeWidth="0.4"
+				className="text-foreground/25"
+			/>
+			{dots.map((d) => (
+				<circle
+					key={d.i}
+					cx={d.x}
+					cy={d.y}
+					r={d.gold ? 2 : 1.15}
+					className={d.gold ? "fill-gold" : "fill-accent/80"}
+				/>
+			))}
+		</svg>
+	);
+}
+
 export function Hero() {
 	const ref = useRef<HTMLElement>(null);
 	const { scrollYProgress } = useScroll({
 		target: ref,
 		offset: ["start start", "end start"],
 	});
-	const yLeft = useTransform(scrollYProgress, [0, 1], ["0%", "-40%"]);
-	const yRight = useTransform(scrollYProgress, [0, 1], ["0%", "40%"]);
-	const fade = useTransform(scrollYProgress, [0, 0.7], [1, 0]);
+	const fade = useTransform(scrollYProgress, [0, 0.8], [1, 0]);
 	const d = INTRO + 0.2;
 
 	return (
 		<section
 			id="home"
 			ref={ref}
-			className="relative flex min-h-[100svh] flex-col overflow-hidden pt-28"
+			className="relative flex h-[100svh] min-h-[100svh] flex-col overflow-hidden pt-20 lg:h-auto lg:min-h-[100svh] lg:pt-24"
 		>
-			<div className="kolam-bg pointer-events-none absolute inset-0 opacity-40 [mask-image:radial-gradient(ellipse_at_center,black,transparent_70%)]" />
-			<div className="pointer-events-none absolute top-1/3 left-1/2 size-[40rem] -translate-x-1/2 rounded-full bg-secondary/70 blur-3xl" />
+			<div className="kolam-bg pointer-events-none absolute inset-0 opacity-35 [mask-image:radial-gradient(ellipse_at_center,black,transparent_72%)]" />
+			<div className="pointer-events-none absolute top-[18%] right-[8%] size-[36rem] rounded-full bg-secondary/80 blur-3xl" />
+			<div className="pointer-events-none absolute bottom-[12%] left-[6%] size-[22rem] rounded-full bg-leaf/15 blur-3xl" />
 
-			{/* DNA in the middle */}
-			<motion.div
-				initial={{ opacity: 0, scale: 0.8 }}
-				animate={{ opacity: 1, scale: 1 }}
-				transition={{ delay: d, duration: 1.6, ease }}
-				style={{ opacity: fade }}
-				data-cursor="drag"
-				className="absolute inset-x-0 top-24 bottom-24 z-10 mx-auto max-w-3xl"
-			>
-				<ClientDNA />
-			</motion.div>
-
-			<div className="relative flex flex-1 flex-col justify-between px-5 pb-8 sm:px-10">
-				<div className="flex items-start justify-between text-xs uppercase tracking-[0.25em] text-muted-foreground">
-					<motion.p
-						initial={{ opacity: 0 }}
-						animate={{ opacity: 1 }}
-						transition={{ delay: d + 0.6 }}
+			<div className="relative z-10 mx-auto flex min-h-0 w-full max-w-7xl flex-1 flex-col px-5 pt-1 pb-1 sm:px-10 lg:grid lg:grid-cols-[minmax(0,0.9fr)_minmax(0,1.1fr)] lg:items-center lg:py-0">
+				<div className="relative z-10 shrink-0 lg:max-w-xl">
+					<motion.div
+						initial={{ opacity: 0, y: 12 }}
+						animate={{ opacity: 1, y: 0 }}
+						transition={{ delay: d + 0.35, duration: 0.7, ease }}
+						className="flex items-center gap-2.5 text-[10px] uppercase tracking-[0.22em] text-muted-foreground sm:gap-3 sm:text-xs sm:tracking-[0.28em]"
 					>
-						Portfolio <span className="text-accent">©2026</span>
+						<span className="text-accent">(00)</span>
+						<span className="h-px w-5 bg-border sm:w-8" />
+						<span className="hidden sm:inline">Introduction</span>
+						<span className="rounded-full border border-border bg-background/80 px-2.5 py-1 tracking-[0.16em] sm:px-3 sm:tracking-[0.18em]">
+							Year III · India
+						</span>
+					</motion.div>
+
+					<h1 className="mt-3 font-display font-light leading-[0.82] tracking-[-0.045em] text-[clamp(3.15rem,12.5vw,7.6rem)] lg:mt-7">
+						<span className="block overflow-hidden">
+							<motion.span
+								className="block"
+								initial={{ y: "110%" }}
+								animate={{ y: 0 }}
+								transition={{ delay: d, duration: 1.15, ease }}
+							>
+								Lisa
+							</motion.span>
+						</span>
+						<span className="-mb-[0.18em] block overflow-hidden pb-[0.18em] pl-[0.08em]">
+							<motion.span
+								className="block italic text-accent"
+								initial={{ y: "110%" }}
+								animate={{ y: 0 }}
+								transition={{
+									delay: d + 0.1,
+									duration: 1.15,
+									ease,
+								}}
+							>
+								Jana
+							</motion.span>
+						</span>
+					</h1>
+
+					<motion.div
+						initial={{ opacity: 0, scaleX: 0.4 }}
+						animate={{ opacity: 1, scaleX: 1 }}
+						transition={{ delay: d + 0.45, duration: 0.8, ease }}
+						className="mt-3 flex origin-left items-center gap-3 lg:mt-6"
+					>
+						<Rangoli className="size-5 lg:size-6" />
+						<span className="h-px flex-1 max-w-40 bg-gradient-to-r from-accent/80 to-transparent" />
+					</motion.div>
+
+					<motion.p
+						initial={{ opacity: 0, y: 18 }}
+						animate={{ opacity: 1, y: 0 }}
+						transition={{ delay: d + 0.5, duration: 0.85, ease }}
+						className="mt-3 max-w-md text-sm leading-snug text-foreground/85 sm:mt-7 sm:text-lg sm:leading-relaxed lg:text-xl"
+					>
+						Biotechnologist in the making — reading life's code with{" "}
+						<em className="font-display italic text-accent">
+							biology
+						</em>{" "}
+						and <em className="font-display italic">AI</em>.
 					</motion.p>
+
 					<motion.p
 						initial={{ opacity: 0 }}
 						animate={{ opacity: 1 }}
 						transition={{ delay: d + 0.7 }}
-						className="text-right"
+						className="mt-3 hidden max-w-sm text-sm leading-relaxed text-muted-foreground lg:block"
 					>
-						B.Tech Biotechnology
-						<br />
-						Year III — India
+						B.Tech Biotechnology. Wet lab, bioinformatics, and
+						models that help soil and water recover.
 					</motion.p>
-				</div>
 
-				<h1 className="pointer-events-none relative z-20 font-display font-light leading-[0.82] tracking-[-0.04em] text-[19vw] sm:text-[14vw]">
-					<motion.span
-						style={{ y: yLeft }}
-						className="block overflow-hidden"
-					>
-						<motion.span
-							className="block"
-							initial={{ y: "100%" }}
-							animate={{ y: 0 }}
-							transition={{ delay: d, duration: 1.2, ease }}
-						>
-							Lisa
-						</motion.span>
-					</motion.span>
-					{/* Padding stays inside the reveal mask so the italic J tail is not sliced off. */}
-					<motion.span
-						style={{ y: yRight }}
-						className="-mb-[0.95em] -mr-[0.12em] block overflow-hidden pb-[0.95em] pr-[0.12em] text-right"
-					>
-						<motion.span
-							className="block italic text-accent"
-							initial={{ y: "100%" }}
-							animate={{ y: 0 }}
-							transition={{
-								delay: d + 0.12,
-								duration: 1.2,
-								ease,
-							}}
-						>
-							Jana
-						</motion.span>
-					</motion.span>
-				</h1>
-
-				<div className="relative z-20 mt-6 grid items-end gap-6 sm:grid-cols-3">
-					<motion.p
-						initial={{ opacity: 0, y: 20 }}
+					<motion.div
+						initial={{ opacity: 0, y: 16 }}
 						animate={{ opacity: 1, y: 0 }}
-						transition={{ delay: d + 0.5, duration: 0.8 }}
-						className="max-w-xs text-base leading-relaxed"
+						transition={{ delay: d + 0.8, duration: 0.7, ease }}
+						className="mt-4 flex flex-wrap items-center gap-2.5 lg:mt-9 lg:gap-3"
 					>
-						Biotechnologist in the making, reading life's code with{" "}
-						<em className="font-display text-accent">biology</em>{" "}
-						and <em className="font-display">AI</em>.
-					</motion.p>
-					<motion.a
-						href="#about"
-						initial={{ opacity: 0 }}
-						animate={{ opacity: 1 }}
-						transition={{ delay: d + 0.8 }}
-						className="hidden items-center justify-center gap-3 justify-self-center text-xs uppercase tracking-[0.3em] text-muted-foreground sm:flex"
-					>
-						<motion.span
-							animate={{ y: [0, 6, 0] }}
-							transition={{ duration: 1.8, repeat: Infinity }}
+						<a
+							href="#about"
+							className="inline-flex items-center gap-2 rounded-full bg-primary px-5 py-2.5 text-sm text-primary-foreground transition-colors hover:bg-accent lg:px-6 lg:py-3"
 						>
-							↓
-						</motion.span>
-						Scroll to explore
-					</motion.a>
+							Enter the lab
+							<motion.span
+								animate={{ y: [0, 3, 0] }}
+								transition={{
+									duration: 1.6,
+									repeat: Infinity,
+									ease: "easeInOut",
+								}}
+							>
+								↓
+							</motion.span>
+						</a>
+						<a
+							href="#contact"
+							className="inline-flex items-center rounded-full border border-foreground/20 bg-background px-5 py-2.5 text-sm transition-colors hover:border-accent hover:text-accent lg:px-6 lg:py-3"
+						>
+							Let's talk
+						</a>
+					</motion.div>
+
 					<motion.div
 						initial={{ opacity: 0 }}
 						animate={{ opacity: 1 }}
-						transition={{ delay: d + 0.9 }}
-						className="flex gap-2 sm:justify-self-end"
+						transition={{ delay: d + 1 }}
+						className="mt-10 hidden flex-wrap gap-2 lg:flex"
 					>
-						{["Bio", "×", "AI"].map((t) => (
+						{["Bio", "AI", "Earth repair"].map((t) => (
 							<span
 								key={t}
-								className="rounded-full border border-foreground/20 px-4 py-2 text-xs uppercase tracking-widest"
+								className="rounded-full border border-foreground/15 bg-background/85 px-3.5 py-1.5 text-[11px] uppercase tracking-[0.22em] text-muted-foreground"
 							>
 								{t}
 							</span>
 						))}
 					</motion.div>
 				</div>
+
+				<motion.div
+					style={{ opacity: fade }}
+					initial={{ opacity: 0, scale: 0.88 }}
+					animate={{ opacity: 1, scale: 1 }}
+					transition={{ delay: d, duration: 1.5, ease }}
+					className="relative mx-auto mt-2 flex min-h-0 w-full flex-1 items-center justify-center overflow-hidden lg:mt-0 lg:block lg:flex-none lg:w-full lg:overflow-visible"
+				>
+					<div className="relative aspect-square h-[min(100%,calc(100vw-2.5rem))] w-auto max-w-full lg:h-auto lg:w-full">
+						<LineMandala className="absolute inset-[-10%] size-[120%] opacity-20 lg:inset-[-14%] lg:size-[128%] lg:opacity-25" />
+						<motion.div
+							animate={{ rotate: 360 }}
+							transition={{
+								duration: 72,
+								repeat: Infinity,
+								ease: "linear",
+							}}
+							className="absolute inset-0"
+						>
+							<KolamRing className="size-full text-foreground" />
+						</motion.div>
+						<div
+							data-cursor="drag"
+							className="dna-blend absolute inset-0"
+						>
+							<ClientDNA />
+						</div>
+						<div className="absolute top-3 right-1 hidden rounded-full border border-border/80 bg-background/80 px-3 py-1.5 text-[10px] uppercase tracking-[0.22em] text-muted-foreground backdrop-blur-md lg:top-6 lg:right-4 lg:block">
+							Helix · live
+						</div>
+						<div className="pointer-events-none absolute inset-x-0 bottom-2 hidden justify-center lg:bottom-4 lg:flex">
+							<div className="rounded-full bg-background/75 px-4 py-1.5 text-center backdrop-blur-md">
+								<SequencePulse />
+								<p className="text-[10px] uppercase tracking-[0.28em] text-muted-foreground">
+									Drag to inspect
+								</p>
+							</div>
+						</div>
+					</div>
+				</motion.div>
 			</div>
 
-			<div className="relative z-20 border-y border-border bg-background/80 py-4 font-display text-lg italic text-muted-foreground backdrop-blur">
+			<div className="relative z-20 shrink-0 border-y border-border bg-background/80 py-2.5 font-display text-base italic text-muted-foreground backdrop-blur lg:py-3.5 lg:text-lg">
 				<Marquee
 					items={[
 						"Bioinformatics",

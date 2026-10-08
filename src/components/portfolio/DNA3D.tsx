@@ -162,8 +162,9 @@ function Cells() {
 export default function DNA3D() {
 	return (
 		<Canvas
+			resize={{ offsetSize: true }}
 			dpr={[1, 2]}
-			camera={{ position: [0, 0, 10.5], fov: 45 }}
+			camera={{ position: [0.15, 0.08, 6.35], fov: 36 }}
 			gl={{ alpha: true, antialias: true }}
 		>
 			<ambientLight intensity={0.7} />

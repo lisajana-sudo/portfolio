@@ -41,6 +41,12 @@ export function Preloader() {
 		const start = performance.now();
 		const dur = (INTRO - 0.5) * 1000;
 		let id = 0;
+		let hide = 0;
+		const finish = () => {
+			if (hide) return;
+			setN(100);
+			hide = window.setTimeout(() => setDone(true), 250);
+		};
 		const tick = (t: number) => {
 			const p = Math.min(1, (t - start) / dur);
 			setN(Math.round((1 - Math.pow(1 - p, 3)) * 100));
@@ -51,10 +57,15 @@ export function Preloader() {
 				).join(""),
 			);
 			if (p < 1) id = requestAnimationFrame(tick);
-			else setTimeout(() => setDone(true), 250);
+			else finish();
 		};
 		id = requestAnimationFrame(tick);
-		return () => cancelAnimationFrame(id);
+		const failsafe = window.setTimeout(finish, dur + 50);
+		return () => {
+			cancelAnimationFrame(id);
+			window.clearTimeout(hide);
+			window.clearTimeout(failsafe);
+		};
 	}, []);
 
 	return (

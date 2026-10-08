@@ -32,7 +32,7 @@ export function LineMandala({ className = "" }: { className?: string }) {
 			loading="lazy"
 			width={1024}
 			height={1024}
-			className={`pointer-events-none absolute select-none ${className}`}
+			className={`pointer-events-none absolute max-w-none select-none ${className}`}
 		/>
 	);
 }

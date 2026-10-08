@@ -8,6 +8,10 @@ export default defineConfig({
 	resolve: {
 		tsconfigPaths: true,
 	},
+	server: {
+		host: true,
+		allowedHosts: ["darkness-yen-expletive.ngrok-free.dev"],
+	},
 	plugins: [
 		tailwindcss(),
 		tanstackStart({
